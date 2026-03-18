@@ -1,0 +1,10 @@
+<div class="flex items-start gap-3 py-3 border-b border-gray-100 last:border-0" id="<%= dom_id(activity) %>">
+  <div class="mt-1 w-2 h-2 rounded-full flex-shrink-0 <%= icon_class %> bg-current"></div>
+  <div class="flex-1 min-w-0">
+    <p class="text-sm text-gray-900">
+      <span class="font-medium"><%= trackable_name %></span>
+      <span class="text-gray-500"><%= activity.description %></span>
+    </p>
+    <p class="text-xs text-gray-400 mt-0.5"><%= time_ago %></p>
+  </div>
+</div>

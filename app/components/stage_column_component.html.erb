@@ -1,0 +1,19 @@
+<div class="flex-1 min-w-[250px] max-w-[320px]"
+     data-action="dragover->pipeline#dragover dragleave->pipeline#dragleave drop->pipeline#drop"
+     data-stage="<%= stage %>"
+     id="stage-<%= stage %>">
+  <div class="bg-gray-50 rounded-lg p-3">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide"><%= stage.humanize %></h3>
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-gray-500"><%= deals.size %> deals</span>
+        <span class="text-xs font-medium text-gray-600"><%= total_value %></span>
+      </div>
+    </div>
+    <div class="space-y-2 min-h-[100px]" id="stage-<%= stage %>-deals">
+      <% deals.each do |deal| %>
+        <%= render DealCardComponent.new(deal: deal) %>
+      <% end %>
+    </div>
+  </div>
+</div>
