@@ -1,0 +1,10 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">Pipeline</h1>
+  <%= link_to "New Deal", new_deal_path, class: "bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700" %>
+</div>
+
+<div class="flex gap-4 overflow-x-auto pb-4" data-controller="pipeline">
+  <% Deal::STAGES.each do |stage| %>
+    <%= render StageColumnComponent.new(stage: stage, deals: @deals_by_stage[stage] || []) %>
+  <% end %>
+</div>

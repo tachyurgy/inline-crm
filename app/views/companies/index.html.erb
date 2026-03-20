@@ -1,0 +1,19 @@
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">Companies</h1>
+  <%= link_to "New Company", new_company_path, class: "bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700" %>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  <% @companies.each do |company| %>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow" id="<%= dom_id(company) %>">
+      <%= link_to company_path(company), class: "block" do %>
+        <h3 class="text-lg font-medium text-gray-900 hover:text-blue-600"><%= company.name %></h3>
+        <p class="text-sm text-gray-500 mt-1"><%= company.industry %></p>
+        <div class="flex items-center gap-4 mt-3 text-xs text-gray-400">
+          <span><%= company.contacts.count %> contacts</span>
+          <span><%= company.deals.count %> deals</span>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

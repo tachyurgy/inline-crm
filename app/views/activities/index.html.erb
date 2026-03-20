@@ -1,0 +1,16 @@
+<div class="mb-6">
+  <h1 class="text-2xl font-bold text-gray-900">Activity Feed</h1>
+</div>
+
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+  <div id="activity-feed"
+       data-controller="activity-feed"
+       data-activity-feed-url-value="<%= feed_activities_path(since: @activities.first&.id || 0) %>">
+    <% @activities.each do |activity| %>
+      <%= render ActivityEntryComponent.new(activity: activity) %>
+    <% end %>
+    <% if @activities.empty? %>
+      <p class="text-sm text-gray-400 py-8 text-center">No activity recorded yet. Start editing contacts, companies, or deals to see changes here.</p>
+    <% end %>
+  </div>
+</div>

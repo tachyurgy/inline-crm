@@ -1,0 +1,48 @@
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900"><%= @deal.name %></h1>
+    <p class="text-sm text-gray-500">
+      <%= link_to @deal.company.name, company_path(@deal.company), class: "text-blue-600 hover:text-blue-800" %>
+      <% if @deal.contact %>
+        &middot; <%= link_to @deal.contact.full_name, contact_path(@deal.contact), class: "text-blue-600 hover:text-blue-800" %>
+      <% end %>
+    </p>
+  </div>
+  <div class="flex gap-2">
+    <%= link_to "Back to Pipeline", deals_path, class: "text-sm text-gray-600 hover:text-gray-900 px-3 py-2" %>
+    <%= button_to "Delete", deal_path(@deal), method: :delete, class: "text-sm text-red-600 hover:text-red-800 px-3 py-2", data: { turbo_confirm: "Are you sure?" } %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <div class="lg:col-span-2">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Details</h2>
+      <p class="text-xs text-gray-400 mb-4">Click any field to edit inline</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <%= render EditableFieldComponent.new(record: @deal, field: :name, label: "Deal Name") %>
+        <%= render EditableFieldComponent.new(record: @deal, field: :stage, label: "Stage", input_type: :select) %>
+        <%= render EditableFieldComponent.new(record: @deal, field: :value, label: "Value", input_type: :number) %>
+      </div>
+      <div class="mt-4">
+        <%= render EditableFieldComponent.new(record: @deal, field: :notes, label: "Notes", input_type: :textarea) %>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+      <h2 class="text-lg font-semibold text-gray-900 mb-4">Activity</h2>
+      <div id="activity-feed"
+           data-controller="activity-feed"
+           data-activity-feed-url-value="<%= feed_activities_path(since: @activities.first&.id || 0) %>">
+        <% @activities.each do |activity| %>
+          <%= render ActivityEntryComponent.new(activity: activity) %>
+        <% end %>
+        <% if @activities.empty? %>
+          <p class="text-sm text-gray-400 py-4 text-center">No activity yet</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
