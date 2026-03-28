@@ -29,14 +29,21 @@ class CompaniesController < ApplicationController
     if @company.update(company_params)
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            dom_id(@company, company_params.keys.first),
-            EditableFieldComponent.new(
-              record: @company,
-              field: company_params.keys.first.to_sym,
-              input_type: field_type(company_params.keys.first)
+          field = company_params.keys.first
+          streams = [
+            turbo_stream.replace(
+              dom_id(@company, field),
+              EditableFieldComponent.new(
+                record: @company,
+                field: field.to_sym,
+                input_type: field_type(field)
+              )
             )
-          )
+          ]
+          if field == "name"
+            streams << turbo_stream.update("page-title", @company.name)
+          end
+          render turbo_stream: streams
         end
         format.html { redirect_to @company }
       end

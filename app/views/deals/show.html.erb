@@ -1,6 +1,6 @@
 <div class="flex items-center justify-between mb-6">
   <div>
-    <h1 class="text-2xl font-bold text-gray-900"><%= @deal.name %></h1>
+    <h1 class="text-2xl font-bold text-gray-900" id="page-title"><%= @deal.name %></h1>
     <p class="text-sm text-gray-500">
       <%= link_to @deal.company.name, company_path(@deal.company), class: "text-blue-600 hover:text-blue-800" %>
       <% if @deal.contact %>
@@ -43,6 +43,7 @@
           <p class="text-sm text-gray-400 py-4 text-center">No activity yet</p>
         <% end %>
       </div>
+      <%= render "shared/add_note", url: deal_activities_path(@deal) %>
     </div>
   </div>
 </div>

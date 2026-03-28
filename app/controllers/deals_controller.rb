@@ -29,14 +29,21 @@ class DealsController < ApplicationController
     if @deal.update(deal_params)
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            dom_id(@deal, deal_params.keys.first),
-            EditableFieldComponent.new(
-              record: @deal,
-              field: deal_params.keys.first.to_sym,
-              input_type: field_type(deal_params.keys.first)
+          field = deal_params.keys.first
+          streams = [
+            turbo_stream.replace(
+              dom_id(@deal, field),
+              EditableFieldComponent.new(
+                record: @deal,
+                field: field.to_sym,
+                input_type: field_type(field)
+              )
             )
-          )
+          ]
+          if field == "name"
+            streams << turbo_stream.update("page-title", @deal.name)
+          end
+          render turbo_stream: streams
         end
         format.html { redirect_to @deal }
       end

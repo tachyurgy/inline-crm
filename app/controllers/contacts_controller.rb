@@ -3,6 +3,12 @@ class ContactsController < ApplicationController
 
   def index
     @contacts = Contact.includes(:company).order(:first_name)
+    if params[:q].present?
+      q = "%#{params[:q]}%"
+      @contacts = @contacts.where(
+        "first_name ILIKE :q OR last_name ILIKE :q OR email ILIKE :q", q: q
+      )
+    end
   end
 
   def show
@@ -27,14 +33,21 @@ class ContactsController < ApplicationController
     if @contact.update(contact_params)
       respond_to do |format|
         format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            dom_id(@contact, contact_params.keys.first),
-            EditableFieldComponent.new(
-              record: @contact,
-              field: contact_params.keys.first.to_sym,
-              input_type: field_type(contact_params.keys.first)
+          field = contact_params.keys.first
+          streams = [
+            turbo_stream.replace(
+              dom_id(@contact, field),
+              EditableFieldComponent.new(
+                record: @contact,
+                field: field.to_sym,
+                input_type: field_type(field)
+              )
             )
-          )
+          ]
+          if %w[first_name last_name].include?(field)
+            streams << turbo_stream.update("page-title", @contact.full_name)
+          end
+          render turbo_stream: streams
         end
         format.html { redirect_to @contact }
       end
