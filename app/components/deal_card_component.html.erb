@@ -1,14 +1,14 @@
-<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3 mb-2 cursor-grab active:cursor-grabbing"
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-3 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow duration-150"
      draggable="true"
      data-deal-id="<%= deal.id %>"
      data-action="dragstart->pipeline#dragstart dragend->pipeline#dragend"
      id="<%= dom_id(deal) %>">
-  <div class="flex items-center justify-between mb-1">
-    <%= link_to deal.name, deal_path(deal), class: "text-sm font-medium text-gray-900 hover:text-blue-600 truncate", data: { turbo_frame: "_top" } %>
-    <span class="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full whitespace-nowrap ml-2"><%= deal.formatted_value %></span>
+  <%= link_to deal.name, deal_path(deal), class: "text-sm font-medium text-gray-900 hover:text-blue-600 block mb-1", data: { turbo_frame: "_top" } %>
+  <div class="flex items-center justify-between">
+    <p class="text-xs text-gray-500"><%= deal.company.name %></p>
+    <span class="text-xs font-semibold text-green-700 bg-green-50 px-2 py-0.5 rounded-full whitespace-nowrap"><%= deal.formatted_value %></span>
   </div>
-  <p class="text-xs text-gray-500 truncate"><%= deal.company.name %></p>
   <% if deal.contact %>
-    <p class="text-xs text-gray-400 truncate"><%= deal.contact.full_name %></p>
+    <p class="text-xs text-gray-400 mt-1"><%= deal.contact.full_name %></p>
   <% end %>
 </div>

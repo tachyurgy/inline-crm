@@ -1,18 +1,26 @@
-<div class="flex-1 min-w-[250px] max-w-[320px]"
+<div class="flex-shrink-0 w-[280px]"
      data-action="dragover->pipeline#dragover dragleave->pipeline#dragleave drop->pipeline#drop"
      data-stage="<%= stage %>"
      id="stage-<%= stage %>">
-  <div class="bg-gray-50 rounded-lg p-3">
+  <div class="bg-gray-50 rounded-lg p-3 transition-colors duration-150">
     <div class="flex items-center justify-between mb-3">
-      <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide"><%= stage.humanize %></h3>
       <div class="flex items-center gap-2">
-        <span class="text-xs text-gray-500"><%= deals.size %> deals</span>
-        <span class="text-xs font-medium text-gray-600"><%= total_value %></span>
+        <div class="w-2 h-2 rounded-full bg-<%= color %>-500"></div>
+        <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide"><%= stage.humanize %></h3>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded-full font-medium"><%= deals.size %></span>
+        <span class="text-xs font-medium text-gray-500"><%= total_value %></span>
       </div>
     </div>
-    <div class="space-y-2 min-h-[100px]" id="stage-<%= stage %>-deals">
+    <div class="space-y-2 min-h-[80px]" id="stage-<%= stage %>-deals">
       <% deals.each do |deal| %>
         <%= render DealCardComponent.new(deal: deal) %>
+      <% end %>
+      <% if deals.empty? %>
+        <div class="flex items-center justify-center h-20 text-xs text-gray-400 border-2 border-dashed border-gray-200 rounded-lg">
+          Drop deals here
+        </div>
       <% end %>
     </div>
   </div>
