@@ -19,7 +19,11 @@ class DealsController < ApplicationController
     @deal = Deal.new(deal_params)
     if @deal.save
       @deal.activities.create!(action: "created", description: "Deal was created")
-      redirect_to deals_path, notice: "Deal created."
+      if params[:quick_add]
+        head :ok
+      else
+        redirect_to deals_path, notice: "Deal created."
+      end
     else
       render :new, status: :unprocessable_entity
     end
@@ -55,21 +59,30 @@ class DealsController < ApplicationController
   def move
     old_stage = @deal.stage
     new_stage = params.dig(:deal, :stage)
+    new_position = params.dig(:deal, :position)&.to_i
 
-    if new_stage && Deal::STAGES.include?(new_stage) && @deal.update(stage: new_stage)
-      render turbo_stream: [
-        turbo_stream.replace("stage-#{old_stage}", StageColumnComponent.new(
-          stage: old_stage,
-          deals: Deal.in_stage(old_stage).includes(:company, :contact).order(:position)
-        )),
-        turbo_stream.replace("stage-#{new_stage}", StageColumnComponent.new(
-          stage: new_stage,
-          deals: Deal.in_stage(new_stage).includes(:company, :contact).order(:position)
-        ))
-      ]
-    else
-      head :unprocessable_entity
+    return head(:unprocessable_entity) unless new_stage && Deal::STAGES.include?(new_stage)
+
+    @deal.update!(stage: new_stage)
+
+    # Reorder within the target stage
+    if new_position
+      deals_in_stage = Deal.in_stage(new_stage).where.not(id: @deal.id).order(:position).to_a
+      deals_in_stage.insert(new_position, @deal)
+      deals_in_stage.each_with_index do |deal, idx|
+        deal.update_column(:position, idx)
+      end
     end
+
+    stages_to_refresh = [new_stage]
+    stages_to_refresh << old_stage if old_stage != new_stage
+
+    render turbo_stream: stages_to_refresh.map { |stage|
+      turbo_stream.replace("stage-#{stage}", StageColumnComponent.new(
+        stage: stage,
+        deals: Deal.in_stage(stage).includes(:company, :contact).order(:position)
+      ))
+    }
   end
 
   def destroy
