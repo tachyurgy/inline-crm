@@ -2,13 +2,14 @@ class ContactsController < ApplicationController
   before_action :set_contact, only: %i[show update destroy]
 
   def index
-    @contacts = Contact.includes(:company).order(:first_name)
+    contacts = Contact.includes(:company).order(:first_name)
     if params[:q].present?
       q = "%#{params[:q]}%"
-      @contacts = @contacts.where(
+      contacts = contacts.where(
         "first_name ILIKE :q OR last_name ILIKE :q OR email ILIKE :q", q: q
       )
     end
+    @pagy, @contacts = pagy(contacts, limit: 25)
   end
 
   def show
@@ -23,7 +24,11 @@ class ContactsController < ApplicationController
     @contact = Contact.new(contact_params)
     if @contact.save
       @contact.activities.create!(action: "created", description: "Contact was created")
-      redirect_to @contact, notice: "Contact created."
+      if params[:quick_add]
+        head :ok
+      else
+        redirect_to @contact, notice: "Contact created."
+      end
     else
       render :new, status: :unprocessable_entity
     end

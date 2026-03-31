@@ -1,0 +1,24 @@
+<% if pagy.pages > 1 %>
+  <nav class="flex items-center justify-between mt-4 px-2">
+    <p class="text-sm text-gray-500">
+      Showing <%= pagy.from %>-<%= pagy.to %> of <%= pagy.count %> results
+    </p>
+    <div class="flex items-center gap-1">
+      <% if pagy.prev %>
+        <%= link_to "Previous", url_for(page: pagy.prev, q: params[:q]), class: "px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50", data: { turbo_frame: frame_id } %>
+      <% end %>
+      <% pagy.series.each do |item| %>
+        <% if item.is_a?(Integer) %>
+          <%= link_to item, url_for(page: item, q: params[:q]), class: "px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50", data: { turbo_frame: frame_id } %>
+        <% elsif item.is_a?(String) %>
+          <span class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md"><%= item %></span>
+        <% elsif item == :gap %>
+          <span class="px-2 py-1.5 text-sm text-gray-400">...</span>
+        <% end %>
+      <% end %>
+      <% if pagy.next %>
+        <%= link_to "Next", url_for(page: pagy.next, q: params[:q]), class: "px-3 py-1.5 text-sm border border-gray-300 rounded-md hover:bg-gray-50", data: { turbo_frame: frame_id } %>
+      <% end %>
+    </div>
+  </nav>
+<% end %>

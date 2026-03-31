@@ -2,7 +2,12 @@ class CompaniesController < ApplicationController
   before_action :set_company, only: %i[show update destroy]
 
   def index
-    @companies = Company.order(:name)
+    companies = Company.order(:name)
+    if params[:q].present?
+      q = "%#{params[:q]}%"
+      companies = companies.where("name ILIKE :q OR industry ILIKE :q", q: q)
+    end
+    @pagy, @companies = pagy(companies)
   end
 
   def show

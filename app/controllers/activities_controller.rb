@@ -1,6 +1,6 @@
 class ActivitiesController < ApplicationController
   def index
-    @activities = Activity.for_feed
+    @pagy, @activities = pagy(Activity.recent.includes(:trackable), limit: 30)
   end
 
   def create

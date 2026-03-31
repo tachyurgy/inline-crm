@@ -1,19 +1,35 @@
 <div class="flex items-center justify-between mb-6">
   <h1 class="text-2xl font-bold text-gray-900">Companies</h1>
-  <%= link_to "New Company", new_company_path, class: "bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700" %>
+  <div class="flex items-center gap-4">
+    <%= form_with url: companies_path, method: :get, data: { controller: "search", turbo_frame: "companies-grid", turbo_action: "advance" }, class: "relative" do %>
+      <input type="text" name="q" value="<%= params[:q] %>" placeholder="Search companies..."
+             class="w-64 pl-9 pr-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+             data-search-target="input" data-action="input->search#search" autocomplete="off">
+      <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+    <% end %>
+    <%= link_to "New Company", new_company_path, class: "bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700" %>
+  </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-  <% @companies.each do |company| %>
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow" id="<%= dom_id(company) %>">
-      <%= link_to company_path(company), class: "block" do %>
-        <h3 class="text-lg font-medium text-gray-900 hover:text-blue-600"><%= company.name %></h3>
-        <p class="text-sm text-gray-500 mt-1"><%= company.industry %></p>
-        <div class="flex items-center gap-4 mt-3 text-xs text-gray-400">
-          <span><%= company.contacts.count %> contacts</span>
-          <span><%= company.deals.count %> deals</span>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-</div>
+<%= turbo_frame_tag "companies-grid" do %>
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <% @companies.each do |company| %>
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5 hover:shadow-md transition-shadow" id="<%= dom_id(company) %>">
+        <%= link_to company_path(company), class: "block", data: { turbo_frame: "_top" } do %>
+          <h3 class="text-lg font-medium text-gray-900 hover:text-blue-600"><%= company.name %></h3>
+          <p class="text-sm text-gray-500 mt-1"><%= company.industry %></p>
+          <div class="flex items-center gap-4 mt-3 text-xs text-gray-400">
+            <span><%= company.contacts.count %> contacts</span>
+            <span><%= company.deals.count %> deals</span>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+    <% if @companies.empty? %>
+      <div class="col-span-3 py-8 text-center text-sm text-gray-400">No companies found</div>
+    <% end %>
+  </div>
+  <%= render "shared/pagination", pagy: @pagy, frame_id: "companies-grid" %>
+<% end %>
