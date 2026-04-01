@@ -1,0 +1,48 @@
+<%= form_with(model: contact, url: contacts_path(quick_add: quick_add || nil), class: "space-y-4") do |f| %>
+  <% if contact.errors.any? %>
+    <div class="rounded-md bg-red-50 p-4">
+      <ul class="text-sm text-red-700">
+        <% contact.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :first_name, class: "block text-sm font-medium text-gray-700" %>
+    <%= f.text_field :first_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm px-3 py-2 border" %>
+  </div>
+
+  <div>
+    <%= f.label :last_name, class: "block text-sm font-medium text-gray-700" %>
+    <%= f.text_field :last_name, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm px-3 py-2 border" %>
+  </div>
+
+  <div>
+    <%= f.label :email, class: "block text-sm font-medium text-gray-700" %>
+    <%= f.email_field :email, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm px-3 py-2 border" %>
+  </div>
+
+  <div>
+    <%= f.label :phone, class: "block text-sm font-medium text-gray-700" %>
+    <%= f.text_field :phone, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm px-3 py-2 border" %>
+  </div>
+
+  <div>
+    <%= f.label :title, class: "block text-sm font-medium text-gray-700" %>
+    <%= f.text_field :title, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm px-3 py-2 border" %>
+  </div>
+
+  <div>
+    <%= f.label :company_id, "Company", class: "block text-sm font-medium text-gray-700" %>
+    <%= f.collection_select :company_id, Company.order(:name), :id, :name, { include_blank: "Select a company" }, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm px-3 py-2 border" %>
+  </div>
+
+  <div class="flex items-center gap-3 pt-2">
+    <%= f.submit "Create Contact", class: "bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 cursor-pointer" %>
+    <% unless quick_add %>
+      <%= link_to "Cancel", contacts_path, class: "text-sm text-gray-600 hover:text-gray-900" %>
+    <% end %>
+  </div>
+<% end %>

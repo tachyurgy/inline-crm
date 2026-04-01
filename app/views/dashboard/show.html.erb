@@ -1,57 +1,89 @@
-<div class="mb-8">
-  <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
-</div>
+<div data-controller="modal">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+    <div class="flex items-center gap-2">
+      <button data-action="click->modal#open" data-modal-src="<%= new_contact_path(quick_add: true) %>"
+              class="bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm font-medium hover:bg-blue-700">
+        + Contact
+      </button>
+      <button data-action="click->modal#open" data-modal-src="<%= new_deal_path(quick_add: true) %>"
+              class="bg-green-600 text-white px-3 py-1.5 rounded-md text-sm font-medium hover:bg-green-700">
+        + Deal
+      </button>
+    </div>
+  </div>
 
-<div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-    <p class="text-sm font-medium text-gray-500">Contacts</p>
-    <p class="mt-1 text-3xl font-semibold text-gray-900"><%= @contacts_count %></p>
-  </div>
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-    <p class="text-sm font-medium text-gray-500">Companies</p>
-    <p class="mt-1 text-3xl font-semibold text-gray-900"><%= @companies_count %></p>
-  </div>
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-    <p class="text-sm font-medium text-gray-500">Active Deals</p>
-    <p class="mt-1 text-3xl font-semibold text-gray-900"><%= @deals_count %></p>
-  </div>
-  <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-    <p class="text-sm font-medium text-gray-500">Pipeline Value</p>
-    <p class="mt-1 text-3xl font-semibold text-gray-900">$<%= number_with_delimiter(@pipeline_value.to_i) %></p>
-  </div>
-</div>
-
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-  <div class="lg:col-span-2">
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
     <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">Pipeline Overview</h2>
-      <div class="space-y-3">
-        <% Deal::STAGES.first(4).each do |stage| %>
-          <% deals = @deals_by_stage[stage] || [] %>
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-medium text-gray-700 w-28"><%= stage.humanize %></span>
-            <div class="flex-1 mx-4 bg-gray-100 rounded-full h-2">
-              <% max = [@deals_by_stage.values.flatten.size, 1].max %>
-              <div class="bg-blue-500 rounded-full h-2" style="width: <%= (deals.size.to_f / max * 100).round %>%"></div>
+      <p class="text-sm font-medium text-gray-500">Contacts</p>
+      <p class="mt-1 text-3xl font-semibold text-gray-900"><%= @contacts_count %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+      <p class="text-sm font-medium text-gray-500">Companies</p>
+      <p class="mt-1 text-3xl font-semibold text-gray-900"><%= @companies_count %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+      <p class="text-sm font-medium text-gray-500">Active Deals</p>
+      <p class="mt-1 text-3xl font-semibold text-gray-900"><%= @deals_count %></p>
+    </div>
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+      <p class="text-sm font-medium text-gray-500">Pipeline Value</p>
+      <p class="mt-1 text-3xl font-semibold text-gray-900">$<%= number_with_delimiter(@pipeline_value.to_i) %></p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Pipeline Overview</h2>
+        <div class="space-y-3">
+          <% Deal::STAGES.first(4).each do |stage| %>
+            <% deals = @deals_by_stage[stage] || [] %>
+            <div class="flex items-center justify-between">
+              <span class="text-sm font-medium text-gray-700 w-28"><%= stage.humanize %></span>
+              <div class="flex-1 mx-4 bg-gray-100 rounded-full h-2">
+                <% max = [@deals_by_stage.values.flatten.size, 1].max %>
+                <div class="bg-blue-500 rounded-full h-2" style="width: <%= (deals.size.to_f / max * 100).round %>%"></div>
+              </div>
+              <span class="text-sm text-gray-500 w-20 text-right"><%= deals.size %> deals</span>
             </div>
-            <span class="text-sm text-gray-500 w-20 text-right"><%= deals.size %> deals</span>
-          </div>
-        <% end %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
+        <div id="activity-feed">
+          <% @recent_activities.first(10).each do |activity| %>
+            <%= render ActivityEntryComponent.new(activity: activity) %>
+          <% end %>
+          <% if @recent_activities.empty? %>
+            <p class="text-sm text-gray-400 py-4 text-center">No activity yet</p>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
 
-  <div>
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-5">
-      <h2 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h2>
-      <div id="activity-feed">
-        <% @recent_activities.first(10).each do |activity| %>
-          <%= render ActivityEntryComponent.new(activity: activity) %>
-        <% end %>
-        <% if @recent_activities.empty? %>
-          <p class="text-sm text-gray-400 py-4 text-center">No activity yet</p>
-        <% end %>
-      </div>
+  <!-- Slide-over panel -->
+  <div data-modal-target="overlay" class="hidden fixed inset-0 bg-black/30 z-40" data-action="click->modal#close"></div>
+  <div data-modal-target="panel"
+       class="fixed inset-y-0 right-0 w-full max-w-md bg-white shadow-xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out overflow-y-auto"
+       data-action="turbo:submit-end->modal#submitEnd">
+    <div class="flex items-center justify-between p-4 border-b border-gray-200">
+      <h2 class="text-lg font-semibold text-gray-900">Quick Add</h2>
+      <button data-action="click->modal#close" class="text-gray-400 hover:text-gray-600">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="p-4">
+      <%= turbo_frame_tag "quick-add-form" do %>
+        <p class="text-sm text-gray-400 py-8 text-center">Loading form...</p>
+      <% end %>
     </div>
   </div>
 </div>
