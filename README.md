@@ -1,5 +1,7 @@
 # InlineCRM
 
+**Deployment status (Render, 2026-04-10):** Not currently deployed to Render free tier. This app uses Rails 8.1 with `solid_queue`, `solid_cache`, and `solid_cable`, which require a PostgreSQL database. Render's free tier limits the workspace to a single active free Postgres instance, which is already in use by the Pulse deploy. To deploy InlineCRM, either upgrade Render Postgres to a paid plan ($7/mo) or supply an external free Postgres (e.g. Neon, Supabase) as `DATABASE_URL`.
+
 A lightweight CRM built with Rails 8.1, Hotwire (Turbo + Stimulus), and ViewComponent. Everything is editable inline -- no separate edit pages. Drag deals across pipeline stages. Activity feeds update automatically.
 
 ## Stack
